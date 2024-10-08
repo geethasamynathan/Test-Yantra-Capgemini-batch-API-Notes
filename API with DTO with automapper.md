@@ -100,19 +100,145 @@ public static List<BookDTO> ToDTOList(this List<Book> books)
 
 Create a controller ==> BooksController
 
+```cs
+using CF_DTO_without_AutoMapper_Demo.Data;
+using CF_DTO_without_AutoMapper_Demo.DTO;
+using CF_DTO_without_AutoMapper_Demo.Models;
+using CF_DTO_without_AutoMapper_Demo.Utility;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+
+namespace CF_DTO_without_AutoMapper_Demo.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BooksController : ControllerBase
+    {
+        
+    private readonly ApplicationDbContext _context;
+
+        public BooksController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        [HttpGet]
+        public async Task<ActionResult<List<BookDTO>>> GetBooks()
+        {
+            List<Book> books= await _context.Books.ToListAsync();
+            if (books != null)
+            {
+                List<BookDTO> booksDTO = books.ToDTOList();
+                return booksDTO;                
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<BookDTO>> GetBook(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var bookDTO = book.ToDTO();
+            return bookDTO;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<BookDTO>> PostBook(BookDTO bookDTO)
+        {
+            var book = bookDTO.ToEntity();
+            _context.Books.Add(book);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetBook), new { id = book.Id }, bookDTO);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateBook(int id, [FromBody] BookDTO bookDto)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            book.Title = bookDto.Title;
+            book.Author = bookDto.Author;
+            book.Price = bookDto.Price;
+
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult PartiallyUpdateBook(int id, [FromBody] JsonPatchDocument<BookDTO> patchDoc)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var bookDto = new BookDTO
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                Price = book.Price
+            };
+           
+            patchDoc.ApplyTo(bookDto,ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            book.Title = bookDto.Title;
+            book.Author = bookDto.Author;
+            book.Price = bookDto.Price;
+           _context.SaveChanges();
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBook(int id)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            _context.Books.Remove(book);
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        }
+    }
+
+```
+# Explanation
+**Entity (Book):** Represents the database structure.
+
+**DTO (BookDTO):** Simplified version for data transfer.
+
+**DbContext (ApplicationDbContext):** Manages your database connection and transactions.
 
 
 
 
-
-**Step 1:** Setup Your Project
-First, create a new ASP.NET Core Web API project. Install the necessary NuGet packages:
-
-Microsoft.EntityFrameworkCore
-
-Microsoft.EntityFrameworkCore.SqlServer
-
-AutoMapper.Extensions.Microsoft.DependencyInjection
+# Alternate way using AutoMapper
 
 Step 2: Define Your Entity
 Create a Book entity class.
@@ -218,12 +344,7 @@ public class BooksController : ControllerBase
     }
 }
 ```
-# Explanation
-**Entity (Book):** Represents the database structure.
 
-**DTO (BookDTO):** Simplified version for data transfer.
-
-**DbContext (ApplicationDbContext):** Manages your database connection and transactions.
 
 **AutoMapper:** Simplifies the mapping between entities and DTOs.
 
