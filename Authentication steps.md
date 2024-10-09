@@ -1,7 +1,7 @@
 # authentication in web api Demo
 1. create a new project (Training_Auth_Demo)
 
-2. # Packages needs tom install
+2. # Packages needs to install
   <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
   <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
   <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
