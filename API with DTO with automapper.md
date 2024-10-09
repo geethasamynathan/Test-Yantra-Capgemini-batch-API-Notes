@@ -1,6 +1,6 @@
-# Example for DTO with AutoMapper
+# Example for DTO without AutoMapper
 
-1. Create a new Web API Project
+1. Create a new Web API Project (CF_DTO_without_AutoMapper_Demo)
 2. Add Models Folder ==> Add Book Class
  ```cs
  public class Book
@@ -55,47 +55,56 @@ Microsoft.EntityFrameworkCore.Tools
 ```cs
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+          builder.Services.AddControllers().AddNewtonsoftJson();
 ```
 Create a folder Name it as Utility (or) Mappings
 Add class MappingExtensions.cs
 ```cs
-public static class MappingExtensions
+using CF_DTO_without_AutoMapper_Demo.DTO;
+using CF_DTO_without_AutoMapper_Demo.Models;
+
+namespace CF_DTO_without_AutoMapper_Demo.Utility
 {
-    public static BookDTO ToDTO(this Book book)
-{
-    return new BookDTO
+    public static class MappingExtensions
     {
-        Id = book.Id,
-        Title = book.Title,
-        Author = book.Author,
-        Price = book.Price,
-    };
+        public static BookDTO ToDTO(this Book book)
+        {
+            return new BookDTO
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                Price = book.Price,
+            };
+        }
+
+        public static Book ToEntity(this BookDTO bookDTO)
+        {
+            return new Book
+            {
+                Id = bookDTO.Id,
+                Title = bookDTO.Title,
+                Author = bookDTO.Author,
+                Price = bookDTO.Price,
+            };
+        }
+        public static List<BookDTO> ToDTOList(this List<Book> books)
+        {
+            var bookDTOs = new List<BookDTO>();
+
+            //foreach (var book in books)
+            //{
+            //    bookDTOs.Add(book.ToDTO());
+            //}
+           // return bookDTOs;
+            //or
+            return books.Select(book => book.ToDTO()).ToList();
+           
+        }
+    }
 }
 
-public static Book ToEntity(this BookDTO bookDTO)
-{
-    return new Book
-    {
-        Id = bookDTO.Id,
-        Title = bookDTO.Title,
-        Author = bookDTO.Author,
-        Price = bookDTO.Price,
-    };
-}
-public static List<BookDTO> ToDTOList(this List<Book> books)
-{
-    var bookDTOs = new List<BookDTO>();
-
-    //foreach (var book in books)
-    //{
-    //    bookDTOs.Add(book.ToDTO());
-    //}
-   // return bookDTOs;
-    //or
-    return books.Select(book => book.ToDTO()).ToList();
-   
-}
-}
 ```
 
 Create a controller ==> BooksController
@@ -227,6 +236,7 @@ namespace CF_DTO_without_AutoMapper_Demo.Controllers
         }
     }
 
+
 ```
 # Explanation
 **Entity (Book):** Represents the database structure.
@@ -235,12 +245,28 @@ namespace CF_DTO_without_AutoMapper_Demo.Controllers
 
 **DbContext (ApplicationDbContext):** Manages your database connection and transactions.
 
-
-
+# Steps to perform Patch in swagger
+![alt text](image.png)
+[
+  {
+    "op": "replace",
+    "path": "/title",
+    "value": "Updated Title"
+  },
+  {
+    "op": "replace",
+    "path": "/price",
+    "value": 99.99
+  }
+]
 
 # Alternate way using AutoMapper
+create a new Web APIproject (**API_DTO_AutoMapper_Demo**)
+
+add Models Folder ==> Add Book.cs
 
 Step 2: Define Your Entity
+
 Create a Book entity class.
 ```cs
 public class Book
@@ -264,6 +290,25 @@ public class BookDTO
     public decimal Price { get; set; }
 }
 ```
+
+# install below packages from Nuget
+```
+<PackageReference Include="AutoMapper" Version="13.0.1" />
+  
+<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="8.0.8" />
+<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.8" />
+<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
+```
+
+# appsetting.json
+```json
+ "ConnectionStrings": {
+   "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=Book_DB;Trusted_Connection=True;TrustServerCertificate=true;"
+ }
+```
 **Step 4:** Set Up Your DbContext
 Create ApplicationDbContext to manage your database.
 ```cs
@@ -277,21 +322,19 @@ public class ApplicationDbContext : DbContext
 }
 ```
 **Step 5:** Configure Your DbContext
-In Startup.cs or Program.cs (depending on .NET version), configure your DbContext.
+ # Program.cs 
 ```cs
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-    services.AddControllers();
-
-    // Add AutoMapper
-    services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-}
+builder.Services.AddAutoMapper(typeof(BookProfile));
+builder.Services.AddLogging();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddControllers().AddNewtonsoftJson();
 ```
 **Step 6:** Create AutoMapper Profile
-Create a mapping profile for AutoMapper.
+create a Folder with the name of Profiles
+
+Create a mapping profile for AutoMapper. 
+**class with the name of MappingProfile **
 ```cs
 public class MappingProfile : Profile
 {
@@ -299,6 +342,9 @@ public class MappingProfile : Profile
     {
         CreateMap<Book, BookDTO>();
         CreateMap<BookDTO, Book>();
+
+       // (or)
+        CreateMap<Book,BookDTO>().ReverseMap();
     }
 }
 ```
@@ -306,46 +352,168 @@ public class MappingProfile : Profile
 In your controller, inject the ApplicationDbContext and IMapper.
 
 ```csharp
-[ApiController]
-[Route("api/[controller]")]
-public class BooksController : ControllerBase
+using API_DTO_AutoMapper_Demo.DTO;
+using API_DTO_AutoMapper_Demo.Models;
+using AutoMapper;
+using CF_DTO_without_AutoMapper_Demo.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace API_DTO_AutoMapper_Demo.Controllers
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public BooksController(ApplicationDbContext context, IMapper mapper)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BooksController : ControllerBase
     {
-        _context = context;
-        _mapper = mapper;
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<BookDTO>> GetBook(int id)
-    {
-        var book = await _context.Books.FindAsync(id);
-        if (book == null)
+        private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<BooksController> _logger;
+        public BooksController(IMapper mapper,ApplicationDbContext context,ILogger<BooksController>  logger)
         {
-            return NotFound();
+            _mapper = mapper;
+            _context = context;
+            _logger = logger;
         }
+        
+        [HttpPatch("{id}")]
+        public IActionResult PartiallyUpdateBook(int id, [FromBody] JsonPatchDocument<BookDTO> patchDoc)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
 
-        // Use AutoMapper to map Book to BookDTO
-        var bookDTO = _mapper.Map<BookDTO>(book);
-        return bookDTO;
-    }
+            //// Create BookDTO from Book
+            var bookDto = new BookDTO
+            {
+               Id = book.Id,
+               Title = book.Title,
+               Author = book.Author,
+               Price = book.Price
+            };
+            
+            // Apply the patch to BookDTO
+            patchDoc.ApplyTo(bookDto, ModelState);
+            _logger.LogInformation("Patched BookDTO: {@BookDTO}", bookDto);
+            // Check for validation errors
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-    [HttpPost]
-    public async Task<ActionResult<BookDTO>> PostBook(BookDTO bookDTO)
-    {
-        var book = _mapper.Map<Book>(bookDTO);
-        _context.Books.Add(book);
-        await _context.SaveChangesAsync();
+            // Update Book with patched values
+            book.Title = bookDto.Title;
+            book.Author = bookDto.Author;
+            book.Price = bookDto.Price;
 
-        return CreatedAtAction(nameof(GetBook), new { id = book.Id }, bookDTO);
+            // Ensure the entity is tracked by the context
+            _context.Entry(book).State = EntityState.Modified;
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+       
+
     }
 }
+
 ```
 
 
 **AutoMapper:** Simplifies the mapping between entities and DTOs.
 
-This setup ensures you’re efficiently handling data between your API and the database while maintaining a clean separation between the data and presentation layers. Keeps the codebase tidy and maintainable.
+This setup ensures you’re efficiently handling data between your API 
+and the database while maintaining a clean separation between the data 
+and presentation layers. Keeps the codebase tidy and maintainable.
+
+# The same will acheive using Record
+
+instead of BookDTO class you can use Record in below format
+
+![alt text](image-1.png)
+```cs
+namespace API_DTO_AutoMapper_Demo.DTO
+{
+   
+    public record BookDTO(int Id, string Title, string Author, decimal Price);
+
+}
+
+```
+
+
+# BooksController.cs
+**HttpGET,HttpGetbyid,Post,put and delete all methods have same code as above code in books controller.cs**
+```cs
+using API_DTO_AutoMapper_Demo.DTO;
+using API_DTO_AutoMapper_Demo.Models;
+using AutoMapper;
+using CF_DTO_without_AutoMapper_Demo.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace API_DTO_AutoMapper_Demo.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BooksController : ControllerBase
+    {
+        private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<BooksController> _logger;
+        public BooksController(IMapper mapper,ApplicationDbContext context,ILogger<BooksController>  logger)
+        {
+            _mapper = mapper;
+            _context = context;
+            _logger = logger;
+        }
+        
+        
+        [HttpPatch("{id}")]
+        public IActionResult PartiallyUpdateBook(int id, [FromBody] JsonPatchDocument<BookDTO> patchDoc)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            ////// Create BookDTO from Book
+           
+            // Create BookDTO from Book
+            var bookDto = new BookDTO(book.Id, book.Title, book.Author, book.Price);
+            // Apply the patch to BookDTO
+            patchDoc.ApplyTo(bookDto, ModelState);
+            _logger.LogInformation("Patched BookDTO: {@BookDTO}", bookDto);
+            // Check for validation errors
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Update Book with patched values
+            book.Title = bookDto.Title;
+            book.Author = bookDto.Author;
+            book.Price = bookDto.Price;
+
+            // Ensure the entity is tracked by the context
+            _context.Entry(book).State = EntityState.Modified;
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            return NoContent();
+        }      
+
+    }
+}
+```
