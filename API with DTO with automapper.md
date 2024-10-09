@@ -377,7 +377,62 @@ namespace API_DTO_AutoMapper_Demo.Controllers
             _context = context;
             _logger = logger;
         }
-        
+        [HttpGet]
+        public async Task<ActionResult<List<BookDTO>>> GetBooks()
+        {
+            List<Book> books = await _context.Books.ToListAsync();
+            if (books != null)
+            {
+                var bookDTOs = _mapper.Map<List<BookDTO>>(books);
+                return Ok(bookDTOs);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<BookDTO>> GetBook(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var bookDTO = _mapper.Map<BookDTO>(book);
+            return bookDTO;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<BookDTO>> PostBook(BookDTO bookDTO)
+        {
+            var book = _mapper.Map<Book>(bookDTO);
+            _context.Books.Add(book);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetBook), new { id = book.Id }, bookDTO);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateBook(int id, [FromBody] BookDTO bookDto)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            book.Title = bookDto.Title;
+            book.Author = bookDto.Author;
+            book.Price = bookDto.Price;
+
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
         [HttpPatch("{id}")]
         public IActionResult PartiallyUpdateBook(int id, [FromBody] JsonPatchDocument<BookDTO> patchDoc)
         {
