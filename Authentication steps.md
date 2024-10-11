@@ -547,3 +547,7 @@ after you gave token .Now goto access getproducts endpoint.
 
 Login as Admin and receive token ==> Request for POST product Endpoint can accessible by 
 Admin
+
+
+Below is the link to get code
+https://github.com/geethasamynathan/JWT_Auth_Demo_TestYantra
