@@ -342,3 +342,208 @@ namespace Training_Auth_Demo.Controllers
 
 
 ```
+# To Enable the Authorize icon in Swagger
+# progrm.cs
+```cs
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "please Enter Token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] { }
+            }
+        });
+});
+```
+
+# let us connect with BikeStores db in the same wb api project
+todo so let us use Db-First-Approach
+
+goto package Manager console
+`Scaffold-DbContext "Server=(localdb)\MSSQLLocalDB;Database=BikeStores;Trusted_Connection=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models`
+
+It will create Models Folder ==> add all classes related to Entities.
+(BikeStoreContext communicate with server)
+
+
+Register that in program.cs
+```cs
+builder.Services.AddDbContext<BikeStoresContext>(); // as it has server details you can use it 
+ (or)
+ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+        builder.Configuration.GetConnectionString("BikeStoreConnection"))); // if you registered in appsettings.json file as bikeStoreConnection you can go with this option
+```
+
+
+# Create Products Controller (or) any other controller depends on your Requirement
+
+# ProductsController.cs
+```cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Training_Auth_Demo.Models;
+
+namespace Training_Auth_Demo.Controllers
+{
+  //  [AllowAnonymous]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductsController : ControllerBase
+    {
+        private readonly BikeStoresContext _context;
+
+        public ProductsController(BikeStoresContext context)
+        {
+            _context = context;
+        }
+        [Authorize(Roles = "User")]
+        // GET: api/Products
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+            return await _context.Products.ToListAsync();
+        }
+
+        // GET: api/Products/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Product>> GetProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return product;
+        }
+
+        // PUT: api/Products/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct(int id, Product product)
+        {
+            if (id != product.ProductId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(product).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Products    
+        [Authorize(Roles ="Admin")]
+        [HttpPost]
+
+        public async Task<ActionResult<Product>> PostProduct(Product product)
+        {
+            _context.Products.Add(product);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (ProductExists(product.ProductId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+        }
+
+        // DELETE: api/Products/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ProductExists(int id)
+        {
+            return _context.Products.Any(e => e.ProductId == id);
+        }
+    }
+}
+
+````
+
+Then  run your app.
+![alt text](image-2.png)
+
+goto GetProducts Endpint without login ypu will ger an Unauthorized Error as you have not
+passed valid token
+![alt text](image-3.png)
+
+
+so login with proper credentials and receive the token
+
+![alt text](image-5.png)
+![alt text](image-6.png)
+![alt text](image-7.png)
+![alt text](image-8.png)
+after you gave token .Now goto access getproducts endpoint.
+![alt text](image-9.png)
+
+
+Login as Admin and receive token ==> Request for POST product Endpoint can accessible by 
+Admin
