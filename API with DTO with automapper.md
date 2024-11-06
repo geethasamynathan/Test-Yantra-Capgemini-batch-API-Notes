@@ -489,11 +489,11 @@ and presentation layers. Keeps the codebase tidy and maintainable.
 
 # The same will acheive using Record
 # What is a Record in C#?
-In C#, a record is a reference type introduced in C# 9.0. It is a special kind of class designed primarily for storing immutable data in a concise and convenient way. Unlike regular classes, records provide built-in support for value-based equality, meaning two records with the same data will be considered equal, even if they are distinct instances.
+In C#, a record is a reference type introduced in C# 9.0. It is a special kind of class designed **primarily for storing immutable data** in a concise and convenient way. Unlike regular classes, records provide built-in support for value-based equality, meaning two records with the same data will be considered equal, even if they are distinct instances.
 
 # Key features of records include:
 
-**Immutable by Default:** By default, properties in a record are read-only and can only be initialized through the constructor. While it’s possible to define mutable properties, immutability is a core aspect of records.
+**Immutable by Default:** By default, properties in a record are **read-only and can only be initialized through the constructor**. While it’s possible to define mutable properties, immutability is a core aspect of records.
 **Value-based Equality:** The default implementation of equality in records compares the values of the properties, not the references. This means two record instances with the same values are considered equal.
 **Concise Syntax:** Records offer a compact syntax for declaring classes and their properties.
 **With-Expression:** A special with expression allows you to create a new record based on an existing one with modifications, without changing the original instance.
