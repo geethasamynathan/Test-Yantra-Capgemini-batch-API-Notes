@@ -2,11 +2,14 @@
 1. create a new project (Training_Auth_Demo)
 
 2. # Packages needs to install
-  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
-  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
-  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
-  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
-  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+ `Microsoft.AspNetCore.Authentication.JwtBearer`
+   
+ `Microsoft.AspNetCore.Identity.EntityFrameworkCore`
+
+ `Microsoft.EntityFrameworkCore.Tools`
+
+ `Microsoft.EntityFrameworkCore.SqlServer`
+
 3.create an Authentication Folder
 
     a) add new class (ApplicationUser)

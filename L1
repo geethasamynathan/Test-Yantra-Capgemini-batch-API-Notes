@@ -1,0 +1,144 @@
+1)In which of the following cloud computing approach, a user can create and deploy  application on cloud? Choose one: iaas,paas,Saas,Daas
+ANS: PAAS
+
+2)Which of the following is not an example of software as a service?Choose one: Google Docs, office 365, Salesforce,Azure Compute
+Ans:Azure Compute
+
+3)Identify True or False Statement:
+1: In Multi-Tenant Application, a single copy of application is shared among multiple users. 2: Single-Tenant Application does not provide any cost advantages
+Ans: st-1 is true, st-2 is false
+
+4)James is working as application developer with Acme Inc Corporation.He wants to create a environment to test his application on cloud.Which of the following you will suggest him?choose one: Saas,Paas,Iaas, testing as a service
+Ans:Paas
+
+5)Which of the following is not a azure network? Virtual network,load balancer, virtual machine,Dns
+ANS: Virtual Machine
+
+6)Identify True or False Statement:1: Virtual Machine is a laaS offering from Azure used to create servers on cloud 2: Service Factory is used develop microservices and orchestrate containers on Windows or Linux
+ANS: st-1 is true, st-2 is false
+
+7)Bill is a application developer at Contoso Inc. He wants to move an application from on premises to cloud. Which of the following service of Azure he should use? Choose one: Azure app server, Azure Compute service, Azure Network service, Azure security Ans:Azure Compute Service
+
+8)Veena needs maches to install some applications. Hardware requirement for these application may vary, also she may need these machines & applications shut frequently.What will be right choice for Veena in this scenario?Choose one: Azure virtual machine, Azure function app, Azure logic app,Azure mobile app
+ANS: AZURE VIRTUAL MACHINE
+
+9)Which of following is Not valid Service offered in the cloud? Choose one:Iaas,paas,saas,Raas
+ANS: RAAS(Resource as a service)
+
+10)Complete the following statement.__can limit access to sensitive data by controlling how data appears.choose one: Row level security, always encrypted, dynamic data masking, Transparent data encryption
+ANS: Dynamic Data Masking
+
+11)Radhika want to work with large amounts of data which should be optimized for performing data analytics tasks. What will be the correct  option to fulfill this requirement? choose one: Azure SQL Database, SQL server stretch Database,Azure database for postgreSql,Azure SQL data warehouse
+Ans: Azure SQL Data Warehouse
+
+12)which of the following is not one of the noSql database? Options : mongoDb,MySQL,cosmosDb,DynamoDb ANS: MySql
+
+13)State whether the following statements regarding Azure Data Storage are True or False?1. The service users pay according to their usage of the service.2. Users should signed agreement where it is clearly mentioned that he will not create and destroy environments without approval from provider.
+ANS: st-1 is true,st-2 is false
+
+14)Which of the following 2 type of authentication provided by Azure SQL server database? SQL authentication, azure vm authentication, passport Authentication, Azure active Directory
+Ans: SQL Authentication, Azure active Directory
+
+15)State whether the following statements wrt Azure Storage are True or False.1. Azure Storage enables data to be accessible anywhere for any type of application. 2. Azure Storage can be used by application like web, desktop, mobile devices which run in the Cloud, but not on-premises 
+ANS: st-1 is true,st-2 is false
+
+16)Which of the following is the correct function URL to trigger the functions via HTTP in Azure?a)https://<Your FunctionApp>.azurewebsites.net/<Your Function Name>?code=<your access code> b) https://<Your FunctionApp>.azurewebsites.net/api/<Your Function Name>?code=<your access code> c) https://<Your FunctionApp>.azurewebsites.net/api/<Your Function Name>?code d) https://<Your FunctionApp>.azurewebsites.net/<Your Function Name>?code
+ANS : https://<Your FunctionApp>.azurewebsites.net/api/<Your Function Name>?code=<your access code>
+
+17)Which of the following are the correct command to test by using command line to make  a GET request against azure functions?
+a)curl-G url/api/functionname?code
+=<your access code>
+B)curl--G url/api/functionname? code =<your access code>
+c)curl--get
+url/api/functionname?code=<youraccess code>
+d)curl-get url/api/functionname?code=<your access code>
+ANS: a) curl -G url/api/functionname?code=<your access code> AND  d) curl -get url/api/functionname?code=<your access code>
+
+18)Radhika has created Azure Storage connection string with name "CloudStorage Connection".She would like to create queue client. Which of the following code is correct for the same?a)CloudStorageAccount
+storageAccount =
+CloudStorageAccount.Parse(ConfigurationManager.AppSettings["CloudStorageConnection"]):
+Cloud Queue Client
+queue Client =
+storageAccount.CreateCloudQueueClient();b)CloudStorage Account
+storageAccount =
+ConfigurationManager.AppSettings["CloudStorageConnection"];
+Cloud Queue Client
+queueClient =
+storageAccount.CreateCloudQueueClient();C)CloudStorageAccount
+storageAccount =
+CloudStorageAccount.Parse(ConfigurationManager.AppSettings["CloudStorageConnection"]):
+Cloud Queue Client
+queue Client =
+storageAccount.CreateQueueClient();D)CloudStorage Account
+storageAccount =
+ConfigurationManager.AppSettings["CloudStorageConnection"];
+Cloud Queue Client
+queueClient =
+storageAccount.CreateQueueClient();  ANS : OPTION  a)CloudStorageAccount
+storageAccount =
+CloudStorageAccount.Parse(ConfigurationManager.AppSettings["CloudStorageConnection"]):
+Cloud Queue Client
+queue Client =
+storageAccount.CreateCloudQueueClient();
+
+19)Identify the application level security provided by Azure : a)add web application firewall b)add next generation firewall c) enable server SQL and database d) route traffic through ngfw only
+ANS: Add web application firewall
+20)Which of the following command will create a new user for domain using role based access control and azure cloud shell? a) New-Azure b) create-Azureuser c) create-AzureADUser d)New -AzureADUser
+ANS:  New-AzureADUser
+
+21)Arrange the steps in sequence for security center to create recommendation:
+1.Turn on data collection
+2.Choose which recommendations to see as part of your security policy.
+3.Configure security policies
+ANS: 3,1,2
+
+22)ABC Pvt Ltd has newly launched the service for interactive live quiz and winners will get exciting cash prices credited directly into their account, the company has seen overwhelming response for it and facing an issue of heavy network congestion, hence they decide to use the load balancing to ensure smooth functioning of the service.What is the purpose of using load balancer?a) to distribute network traffic b)to divert network traffic c)to reject exceeding network traffic d)to choose shortest path to the resource
+ANS: to distribute network traffic
+
+23)Azure Load Balancer probes the health of the server instances in many different ways, Identify the probe which is not supported by Azure load balancer?a)Guest Agent Probe b) Agent custom probe c) Http custom probe d)TCP custom probe
+ANS: Guest Agent Probe
+24)At ____ ,azure application gateway routes traffic. a) network layer b) Data access layer c) Transport layer d) Application Layer
+ANS: Application Layer
+
+25)Azure app service is ___. a)saas b)paas c)iaas d)Aaas ANS: PAAS
+
+26)What are the features of app service? a)Devops Optimization b)Os installation c) visual studio integration d) load management Ans:a,c,d
+
+27)Which of the following is not true about Azure Api Apps? a)No custom api , b)easy consumption of api, c)visual studio integration, d)integration with login apps
+ANS:No custom Api
+
+28)Cors stands for ___.
+ANS: Cross Origin Resource Sharing
+
+29)Azure monitoring can be done at which levels? resource level, resource group level, enterprise level, all the above
+ANS: all the above
+
+30)__helps us to ensure that we have the right amount of resources running to handle the load of application. Metrics, activity log,auto scale,alerts ANS:auto scale.
+
+31)Managing, Planning, Scheduling and controlling a software build through different stages and environments is called as __. a) continuous integration b) release management c) continuous Deployment d) version control mechanism ANS: Release management
+
+32)Consider the below two statements True or false:1.Microservices enables to avoid large code base, making it easier to maintain or add to features.2. Microservices improves deployment times and load times for IDE.
+ANS: st-1 is true,st-2 is false
+
+33)Consider the below two statements True or false:1. Azure Service Fabric is a distributed systems platform 2. Using Azure Service Fabric we can package, deploy, and manage scalable and reliable micro services and containers ANS: Both are true
+34)Consider the below two statements True or false:1. In Azure Service Fabric we can deploy.Net Application.2. In Azure Service Fabric we can deploy Java Application. 3. In Azure Service Fabric we can deploy Linux Container Application ANS: All are true
+
+35)The settings.json file contains default values for the ConnectionString property or for any other property. When using Docker, do these properties can be overridden by the values of environment variables  specified in which file? a)docker-compose.override.xmlb)docker-compose.override.ymlc)docker-compose.override.xaml d)docker-compose.override.html ANS:b)docker-compose.override.yml
+
+36)When you create a Web API project, dependency of microservice can be seen within which namespace that references Entity Framework and many other.NET Core Nuget packagesa)Microsoft.AspNetCore.All b)Microsoft.Core.All c)Microservice.AspNetCore.Alld)Microservice.Core.All ANS: a.Microsoft.AspNetCore.All
+
+37)Configuration of Web API project for DbContext class registration into the service's loC container, can be done in the Startup class by calling the services. AddDbContext<DbContext>() method inside___ method. a)webConfig() b)apiConfig() c) Configureservice d)configureApi() ANS:c) Configureservice()
+
+38)Identify the False statement w.r.t to Docker Images: a)The only way to create an image is by "freezing" a container. b)An image is a collection of files and some meta data c)An image is a read-write filesystem d)Images can be stored in a Docker registry. ANS: a)The only way to create an image is by "freezing" a container.
+
+39)Match the following: Section A
+Docker Daemon
+Docker Client
+Docker Hub 
+Section B 
+a. Public Registry 
+b. Receives and processes incoming Docker API requests. 
+c. Command line tool
+ANS: 1-b,2-c,3-a.
+
+40)State True or False w.r.t Git: 1.Every change in the history of a project is represented by a commit. 2.The most recent commit on a branch is referred to as the tip of that branch. ANS: both are True
