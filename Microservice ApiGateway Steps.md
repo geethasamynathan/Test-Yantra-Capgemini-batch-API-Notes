@@ -215,7 +215,51 @@ right click on SchoolAPI Gateway ==>Add New Item==>Ocelot.json
   ]
 }
 ```
+Goto launchsettings.json file of schoolapigateway project
+```json
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:51589",
+      "sslPort": 44361
+    }
+  },
+  "profiles": {
+    "SchoolApiGateway": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      //"applicationUrl": "https://localhost:7092;http://localhost:5118",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+  
+      "OcelotGateway": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "launchUrl": "swagger",
+        "applicationUrl": "http://localhost:5003",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+      }
+    }
 
+```
 Goto program.cs of schoolapigateway project
 
 ```cs
